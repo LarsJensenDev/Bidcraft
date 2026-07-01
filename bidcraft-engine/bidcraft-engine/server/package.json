@@ -1,0 +1,10 @@
+{
+  "name": "bidcraft-server",
+  "version": "0.1.0",
+  "description": "Bidcraft game engine and server",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "tsx --test tests/*.test.ts"
+  }
+}
