@@ -1,0 +1,15 @@
+# Netlify deployment config for the Bidcraft Vue client.
+# The app is a fully static SPA: game engine and AI run client-side,
+# so no backend/functions are needed. Router uses hash mode, so no
+# SPA redirect rule is required.
+
+[build]
+  # Run the build from the client package. The Vite aliases resolve
+  # @engine -> ../server/src/engine and @shared -> ../shared, which sit
+  # outside this folder but are present in the repo checkout.
+  base    = "bidcraft-engine/bidcraft-engine/client"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
