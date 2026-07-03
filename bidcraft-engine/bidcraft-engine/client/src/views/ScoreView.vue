@@ -4,11 +4,13 @@ import { useRouter } from 'vue-router'
 import type { ScoringMode } from '@shared/types'
 import { useGameStore } from '../stores/game'
 import { useUiStore } from '../stores/ui'
+import { useLocaleStore } from '../stores/locale'
 import DeckGrid from '../components/board/DeckGrid.vue'
 import SinglesArea from '../components/board/SinglesArea.vue'
 
 const gameStore = useGameStore()
 const uiStore = useUiStore()
+const { t } = useLocaleStore()
 const router = useRouter()
 
 const players = computed(() => gameStore.gameState?.players ?? [])
@@ -32,18 +34,18 @@ function playerName(playerId: string) {
 
 <template>
   <main class="score-view">
-    <h2>Spielende – Ergebnisse</h2>
+    <h2>{{ t('score.title') }}</h2>
     <table class="score-table" v-if="gameStore.finalScores">
       <thead>
         <tr>
-          <th>Spieler</th>
-          <th>Deck</th>
-          <th>Singles</th>
-          <th>Strafe</th>
-          <th>Rohpunkte</th>
-          <th>Siegpunkte</th>
-          <th>Endpunkte</th>
-          <th>Wette</th>
+          <th>{{ t('score.col.player') }}</th>
+          <th>{{ t('score.col.deck') }}</th>
+          <th>{{ t('score.col.singles') }}</th>
+          <th>{{ t('score.col.penalty') }}</th>
+          <th>{{ t('score.col.raw') }}</th>
+          <th>{{ t('score.col.victory') }}</th>
+          <th>{{ t('score.col.final') }}</th>
+          <th>{{ t('score.col.bet') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -60,8 +62,8 @@ function playerName(playerId: string) {
           <td>{{ score.victoryPoints }}</td>
           <td class="score-final">{{ score.finalPoints }}</td>
           <td>
-            <span v-if="score.betWon === true">✓ gewonnen</span>
-            <span v-else-if="score.betWon === false">✗ verloren</span>
+            <span v-if="score.betWon === true">{{ t('score.betWon') }}</span>
+            <span v-else-if="score.betWon === false">{{ t('score.betLost') }}</span>
             <span v-else>—</span>
           </td>
         </tr>
@@ -69,8 +71,8 @@ function playerName(playerId: string) {
     </table>
 
     <section class="score-breakdown" v-if="players.length">
-      <h3>Decks &amp; Einzelkarten</h3>
-      <p class="score-breakdown__hint">Zum Nachvollziehen der Wertung.</p>
+      <h3>{{ t('score.breakdownTitle') }}</h3>
+      <p class="score-breakdown__hint">{{ t('score.breakdownHint') }}</p>
       <div class="score-breakdown__players">
         <article
           v-for="player in players"
@@ -90,7 +92,7 @@ function playerName(playerId: string) {
       </div>
     </section>
 
-    <button class="btn btn--primary" @click="playAgain">Nochmal spielen</button>
+    <button class="btn btn--primary" @click="playAgain">{{ t('score.playAgain') }}</button>
   </main>
 </template>
 

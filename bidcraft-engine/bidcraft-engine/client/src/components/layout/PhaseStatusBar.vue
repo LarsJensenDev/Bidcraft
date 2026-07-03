@@ -1,21 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useGameStore } from '@/stores/game'
+import { useLocaleStore } from '@/stores/locale'
+import type { MessageKey } from '@/i18n/messages'
 
 const gameStore = useGameStore()
+const { t } = useLocaleStore()
 
-const PHASE_LABELS: Record<string, string> = {
-  setup: 'Spielaufbau',
-  tieCardSelection: 'Tie-Card wählen',
-  bidding: 'Bieten',
-  resolution: 'Auflösung',
-  cardPlacement: 'Karte platzieren',
-  bettingWindow: 'Wettfenster',
-  scoring: 'Wertung',
-  finished: 'Spielende',
-}
-
-const label = computed(() => PHASE_LABELS[gameStore.phase] ?? gameStore.phase)
+const label = computed(() => t(`phase.${gameStore.phase}` as MessageKey))
 </script>
 
 <template>

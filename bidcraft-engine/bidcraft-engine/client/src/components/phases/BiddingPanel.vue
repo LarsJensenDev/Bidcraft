@@ -2,12 +2,14 @@
 import { computed, ref, watch } from 'vue'
 import { useGameStore } from '@/stores/game'
 import { useUiStore } from '@/stores/ui'
+import { useLocaleStore } from '@/stores/locale'
 import MarketArea from '../board/MarketArea.vue'
 import PlayerHand from '../board/PlayerHand.vue'
 import type { BidType, Card } from '@shared/types'
 
 const gameStore = useGameStore()
 const uiStore = useUiStore()
+const { t } = useLocaleStore()
 
 // Kartengeber-Abfrage (nur 4-Spieler): Ist der Mensch Kartengeber, wird er
 // gefragt, ob er mitbieten oder aussetzen möchte. Die Wahl gilt pro Runde.
@@ -68,13 +70,13 @@ const derivedBidType = computed<BidType | null>(() => {
 const bidLabel = computed(() => {
   if (forcedBid.value) {
     return forcedBid.value.isTieCardPlay
-      ? 'Tie Card (letzte Karte)'
-      : 'Letzte Handkarte: 2 wird allein ausgespielt'
+      ? t('bidding.tieCardLast')
+      : t('bidding.forcedTwo')
   }
   switch (derivedBidType.value) {
-    case 'single': return 'Einzelgebot'
-    case 'double': return 'Doppelgebot'
-    case 'empty': return 'Leergebot'
+    case 'single': return t('bid.single')
+    case 'double': return t('bid.double')
+    case 'empty': return t('bid.empty')
     default: return null
   }
 })
@@ -99,17 +101,17 @@ function submit() {
 
 <template>
   <div class="phase-panel">
-    <h3>Runde {{ gameStore.currentRound }} — Bieten</h3>
+    <h3>{{ t('bidding.title', { n: gameStore.currentRound }) }}</h3>
     <MarketArea :cards="gameStore.marketCards" />
 
     <div v-if="showDealerPrompt" class="dealer-prompt">
-      <p class="dealer-prompt__title">Du bist in dieser Runde Kartengeber.</p>
+      <p class="dealer-prompt__title">{{ t('bidding.dealerTitle') }}</p>
       <p class="dealer-prompt__text">
-        Möchtest du mitbieten oder diese Runde aussetzen?
+        {{ t('bidding.dealerQuestion') }}
       </p>
       <div class="dealer-prompt__actions">
-        <button class="btn btn--primary" @click="chooseBidAsDealer">Mitbieten</button>
-        <button class="btn" @click="sitOutAsDealer">Aussetzen</button>
+        <button class="btn btn--primary" @click="chooseBidAsDealer">{{ t('bidding.bidAlong') }}</button>
+        <button class="btn" @click="sitOutAsDealer">{{ t('bidding.sitOut') }}</button>
       </div>
     </div>
 
@@ -123,10 +125,10 @@ function submit() {
       <p v-if="bidLabel" class="selection-hint">{{ bidLabel }}</p>
       <p v-if="uiStore.errorMessage" class="error-message">{{ uiStore.errorMessage }}</p>
       <p class="selection-hint">
-        Ausgewählt: {{ autoSelectedIds.length }} / {{ forcedBid ? 1 : 2 }} Karten
+        {{ t('bidding.selected', { n: autoSelectedIds.length, max: forcedBid ? 1 : 2 }) }}
       </p>
       <button class="btn btn--primary" :disabled="!canSubmit" @click="submit">
-        Gebot abgeben
+        {{ t('bidding.submit') }}
       </button>
     </template>
   </div>

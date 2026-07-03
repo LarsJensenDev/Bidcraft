@@ -2,12 +2,14 @@
 import { ref, computed } from 'vue'
 import { useGameStore } from '@/stores/game'
 import { useUiStore } from '@/stores/ui'
+import { useLocaleStore } from '@/stores/locale'
 import CardView from '../shared/CardView.vue'
 import DeckGrid from '../board/DeckGrid.vue'
 import type { Card } from '@shared/types'
 
 const gameStore = useGameStore()
 const uiStore = useUiStore()
+const { t } = useLocaleStore()
 
 const chosenCardId = ref<string | null>(null)
 const draggingCardId = ref<string | null>(null)
@@ -85,9 +87,9 @@ function onDropSingles() {
 
 <template>
   <div class="phase-panel">
-    <h3>Karte platzieren</h3>
+    <h3>{{ t('placement.title') }}</h3>
     <template v-if="isHumanTurn">
-      <p>Wähle eine Marktkarte und ziehe sie ins Deck oder zu den Einzelkarten:</p>
+      <p>{{ t('placement.instruction') }}</p>
       <div class="market-choice">
         <div
           v-for="card in gameStore.marketCards"
@@ -121,14 +123,14 @@ function onDropSingles() {
         @dragleave="singlesDropOver = false"
         @drop.prevent="onDropSingles"
       >
-        Als Einzelkarte
+        {{ t('placement.asSingle') }}
       </div>
       <button class="btn btn--primary" :disabled="!canConfirm" @click="confirm">
-        Bestätigen
+        {{ t('placement.confirm') }}
       </button>
     </template>
     <template v-else>
-      <p>KI platziert Karte…</p>
+      <p>{{ t('placement.aiPlacing') }}</p>
     </template>
   </div>
 </template>

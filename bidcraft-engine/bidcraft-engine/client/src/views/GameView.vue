@@ -3,6 +3,7 @@ import { computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useGameStore } from '../stores/game'
 import { useUiStore } from '../stores/ui'
+import { useLocaleStore } from '../stores/locale'
 import TieCardSelectionPanel from '../components/phases/TieCardSelectionPanel.vue'
 import BiddingPanel from '../components/phases/BiddingPanel.vue'
 import CardPlacementPanel from '../components/phases/CardPlacementPanel.vue'
@@ -13,6 +14,7 @@ import CardView from '../components/shared/CardView.vue'
 
 const gameStore = useGameStore()
 const uiStore = useUiStore()
+const { t } = useLocaleStore()
 const router = useRouter()
 
 const phaseComponents = {
@@ -63,9 +65,9 @@ const allBids = computed(() => {
     <Transition name="fade">
       <div v-if="uiStore.showResolutionOverlay" class="resolution-overlay">
         <div class="resolution-card">
-          <p class="resolution-round">Runde {{ gameStore.lastRoundResult?.round }}</p>
-          <p v-if="winnerName" class="resolution-winner">{{ winnerName }} gewinnt!</p>
-          <p v-else class="resolution-no-winner">Keine Gewinner — alle Leergebote</p>
+          <p class="resolution-round">{{ t('resolution.round', { n: gameStore.lastRoundResult?.round ?? 0 }) }}</p>
+          <p v-if="winnerName" class="resolution-winner">{{ t('resolution.wins', { name: winnerName }) }}</p>
+          <p v-else class="resolution-no-winner">{{ t('resolution.noWinner') }}</p>
 
           <div class="resolution-bids">
             <div
@@ -75,10 +77,10 @@ const allBids = computed(() => {
               :class="{ 'resolution-bid-row--winner': entry.isWinner }"
             >
               <span class="resolution-bid-name">
-                {{ entry.player.name }}{{ entry.player.isHuman ? ' (Du)' : '' }}
+                {{ entry.player.name }}{{ entry.player.isHuman ? ' ' + t('common.you') : '' }}
               </span>
               <span v-if="!entry.bid || entry.bid.cards.length === 0" class="resolution-bid-sitout">
-                aussetzt
+                {{ t('resolution.sitout') }}
               </span>
               <template v-else>
                 <div class="resolution-bid-cards">
@@ -89,7 +91,7 @@ const allBids = computed(() => {
             </div>
           </div>
           <button class="btn btn--primary resolution-confirm-btn" @click="gameStore.confirmResolution()">
-            OK
+            {{ t('common.ok') }}
           </button>
         </div>
       </div>

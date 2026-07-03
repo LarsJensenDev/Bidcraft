@@ -19,6 +19,7 @@ import { validateBid, availableBidTypes } from '@engine/validation'
 import { decideBid, decidePlacement } from '@engine/ai'
 import { bestScoringMode } from '@engine/scoring'
 import { useUiStore } from './ui'
+import { useLocaleStore } from './locale'
 
 export const useGameStore = defineStore('game', () => {
   const gameState = ref<GameState | null>(null)
@@ -56,7 +57,18 @@ export const useGameStore = defineStore('game', () => {
   })
 
   function initGame(config: NewGameConfig) {
-    gameState.value = createGame(config)
+    const state = createGame(config)
+    // KI-Namen in die aktuelle UI-Sprache übersetzen (die Engine vergibt neutrale
+    // Platzhalter). Die Namen werden zum Spielstart fixiert.
+    const { t } = useLocaleStore()
+    let aiIndex = 1
+    for (const p of state.players) {
+      if (!p.isHuman) {
+        p.name = t('common.aiName', { n: aiIndex })
+        aiIndex++
+      }
+    }
+    gameState.value = state
     lastRoundResult.value = null
   }
 
@@ -86,7 +98,7 @@ export const useGameStore = defineStore('game', () => {
     if (!forced) {
       const validation = validateBid(human, state, type, cardIds)
       if (!validation.valid) {
-        ui.errorMessage = validation.reason ?? 'Ungültiges Gebot.'
+        ui.errorMessage = useLocaleStore().t('bid.invalid')
         return
       }
     }

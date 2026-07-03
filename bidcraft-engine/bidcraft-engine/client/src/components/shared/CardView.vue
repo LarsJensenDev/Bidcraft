@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Card } from '@shared/types'
+import { useLocaleStore } from '@/stores/locale'
+import type { MessageKey } from '@/i18n/messages'
 
 const props = defineProps<{
   card: Card
@@ -14,6 +16,8 @@ const emit = defineEmits<{
   click: [card: Card]
 }>()
 
+const { t } = useLocaleStore()
+
 const SUIT_SYMBOLS: Record<string, string> = {
   diamonds: '♦',
   hearts: '♥',
@@ -21,11 +25,12 @@ const SUIT_SYMBOLS: Record<string, string> = {
   clubs: '♣',
 }
 
-const RANK_LABELS: Record<number, string> = {
-  11: 'J', 12: 'D', 13: 'K', 14: 'A',
-}
-
-const rankLabel = computed(() => RANK_LABELS[props.card.rank] ?? String(props.card.rank))
+// Bildkarten (Bube/Dame/König/As) sind sprachabhängig, Zahlenkarten nicht.
+const rankLabel = computed(() =>
+  props.card.rank >= 11
+    ? t(`rank.${props.card.rank}` as MessageKey)
+    : String(props.card.rank)
+)
 const suitSymbol = computed(() => SUIT_SYMBOLS[props.card.suit])
 const isRed = computed(() => props.card.suit === 'diamonds' || props.card.suit === 'hearts')
 </script>

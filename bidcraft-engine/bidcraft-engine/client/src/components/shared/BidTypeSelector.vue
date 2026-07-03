@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { BidType } from '@shared/types'
+import { useLocaleStore } from '@/stores/locale'
+import type { MessageKey } from '@/i18n/messages'
 
 defineProps<{
   availableTypes: BidType[]
@@ -10,11 +12,7 @@ const emit = defineEmits<{
   select: [type: BidType]
 }>()
 
-const TYPE_LABELS: Record<BidType, string> = {
-  single: 'Einzelgebot',
-  double: 'Doppelgebot',
-  empty: 'Leergebot',
-}
+const { t } = useLocaleStore()
 </script>
 
 <template>
@@ -26,7 +24,7 @@ const TYPE_LABELS: Record<BidType, string> = {
       :class="{ 'btn--active': selected === type }"
       @click="emit('select', type)"
     >
-      {{ TYPE_LABELS[type] }}
+      {{ t(`bid.${type}` as MessageKey) }}
     </button>
   </div>
 </template>

@@ -1,32 +1,34 @@
 <script setup lang="ts">
 import { useGameStore } from '@/stores/game'
+import { useLocaleStore } from '@/stores/locale'
 
 const gameStore = useGameStore()
+const { t } = useLocaleStore()
 </script>
 
 <template>
   <div class="phase-panel">
-    <h3>Wettfenster</h3>
-    <p>Die erste Spielhälfte ist beendet. Möchtest du auf deinen eigenen Sieg wetten?</p>
-    <p class="betting-note">Wenn du gewinnst, verdoppelst du deine Siegpunkte. Wenn du verlierst, verlierst du die Siegpunkte des Gewinners.</p>
+    <h3>{{ t('betting.title') }}</h3>
+    <p>{{ t('betting.question') }}</p>
+    <p class="betting-note">{{ t('betting.note') }}</p>
     <div class="bet-buttons">
       <button
         class="btn"
         :class="{ 'btn--active': gameStore.humanPlayer?.hasBet === true }"
         @click="gameStore.placeBet(true)"
       >
-        Ja, ich wette!
+        {{ t('betting.yes') }}
       </button>
       <button
         class="btn"
         :class="{ 'btn--active': gameStore.humanPlayer?.hasBet === false }"
         @click="gameStore.placeBet(false)"
       >
-        Nein, danke
+        {{ t('betting.no') }}
       </button>
     </div>
     <button class="btn btn--primary" @click="gameStore.confirmBettingDone()">
-      Weiter
+      {{ t('betting.continue') }}
     </button>
   </div>
 </template>

@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useGameStore } from '@/stores/game'
+import { useLocaleStore } from '@/stores/locale'
 import DeckGrid from './DeckGrid.vue'
 import CardView from '../shared/CardView.vue'
 
 const gameStore = useGameStore()
+const { t } = useLocaleStore()
 
 const humanPlayer = computed(() => gameStore.humanPlayer)
 const opponents = computed(() => gameStore.opponents)
@@ -20,35 +22,35 @@ function sortedDiscard(discard: typeof opponents.value[0]['discard']) {
     <div class="players-grid">
       <div v-if="humanPlayer" class="opponent-card human-player-card">
         <strong>
-          {{ humanPlayer.name }} (Du)
-          <span v-if="humanPlayer.id === dealerId" class="dealer-badge">Geber</span>
+          {{ humanPlayer.name }} {{ t('common.you') }}
+          <span v-if="humanPlayer.id === dealerId" class="dealer-badge">{{ t('opp.dealer') }}</span>
         </strong>
         <div class="opponent-deck-grid">
           <DeckGrid :deck="humanPlayer.deck" />
         </div>
         <ul>
-          <li>Hand: {{ humanPlayer.hand.length }}</li>
-          <li>Singles: {{ humanPlayer.singles.length }}</li>
-          <li>2x: {{ humanPlayer.doubleBidsUsed }}</li>
-          <li>0x: {{ humanPlayer.emptyBidsUsed }}</li>
+          <li>{{ t('opp.hand') }}: {{ humanPlayer.hand.length }}</li>
+          <li>{{ t('opp.singles') }}: {{ humanPlayer.singles.length }}</li>
+          <li>{{ t('opp.double') }}: {{ humanPlayer.doubleBidsUsed }}</li>
+          <li>{{ t('opp.empty') }}: {{ humanPlayer.emptyBidsUsed }}</li>
         </ul>
       </div>
       <div v-for="opp in opponents" :key="opp.id" class="opponent-card">
         <strong>
           {{ opp.name }}
-          <span v-if="opp.id === dealerId" class="dealer-badge">Geber</span>
+          <span v-if="opp.id === dealerId" class="dealer-badge">{{ t('opp.dealer') }}</span>
         </strong>
         <div class="opponent-deck-grid">
           <DeckGrid :deck="opp.deck" />
         </div>
         <ul>
-          <li>Hand: {{ opp.hand.length }}</li>
-          <li>Singles: {{ opp.singles.length }}</li>
-          <li>2x: {{ opp.doubleBidsUsed }}</li>
-          <li>0x: {{ opp.emptyBidsUsed }}</li>
+          <li>{{ t('opp.hand') }}: {{ opp.hand.length }}</li>
+          <li>{{ t('opp.singles') }}: {{ opp.singles.length }}</li>
+          <li>{{ t('opp.double') }}: {{ opp.doubleBidsUsed }}</li>
+          <li>{{ t('opp.empty') }}: {{ opp.emptyBidsUsed }}</li>
         </ul>
         <div v-if="opp.discard.length > 0" class="opponent-discard">
-          <span class="opponent-discard-label">Abwurf ({{ opp.discard.length }}):</span>
+          <span class="opponent-discard-label">{{ t('opp.discard', { n: opp.discard.length }) }}</span>
           <div class="opponent-discard-cards">
             <CardView
               v-for="card in sortedDiscard(opp.discard)"
